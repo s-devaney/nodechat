@@ -1,7 +1,12 @@
+DESCRIPTION
+--------------
+
+A real time chatroom powered by Node.js. Being event driven and using sockets it is extremely quick.
+
 DEMO
 --------------
 
-http://devaney.me.uk/demo/nodechat
+http://demo.devaney.me.uk:8080
 
 DEPENDENCIES
 --------------
