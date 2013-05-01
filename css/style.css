@@ -1,0 +1,153 @@
+/*css reset start*/
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+/*css reset finish*/
+
+html, body {
+	height: 100%;
+	width: 100%;
+}
+
+body {
+	background-color: #fcfcfc;
+	font-family: Arial;
+}
+
+#container {
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	padding: 5%;
+}
+
+#chatContainer {
+	height: 100%;
+	width: 65%;
+	display: inline;
+	float: left;
+	border: 1px solid #e3e3e3;
+	position: relative;
+}
+
+#chatContainer #messagesContainer {
+	width: 96%;
+	overflow-y: scroll;
+	padding: 0 2%;
+	position: relative;
+}
+
+#chatContainer #messagesContainer #messages {
+	position: absolute;
+	bottom: 0;
+}
+
+#chatContainer #messagesContainer #messages p {
+	height: 20px;
+}
+
+#chatContainer #inputContainer {
+	width: 100%;
+	height: 40px;
+	background-color: #f5f5f5;
+	border-top: 1px solid #e3e3e3;
+	position: absolute;
+	bottom: 0;
+}
+
+#chatContainer #inputContainer input {
+	width: 96%;
+	background-color: transparent;
+	border: 0px solid;
+	outline: none;
+	font-size: 1.2em;
+	display: block;
+	margin-top: 6px;
+}
+
+#usernamesContainer {
+	height: 100%;
+	width: 25%;
+	display: inline;
+	float: right;
+	border: 1px solid #e3e3e3;
+	position: relative;
+}
+
+#usernamesContainer #usernames {
+	width: 96%;
+	overflow-y: scroll;
+	padding: 0 2%;
+}
+
+#usernamesContainer #usernames p {
+	height: 20px;
+	font-weight: bold;
+}
+
+#usernamesContainer #version {
+	width: 100%;
+	height: auto;
+	min-height: 40px;
+	background-color: #f5f5f5;
+	border-top: 1px solid #e3e3e3;
+	position: absolute;
+	bottom: 0;
+}
+
+#usernamesContainer #version p {
+	color: #b0b0b0;
+	font-size: 1.2em;
+	padding: 10px;
+}
+
+#usernamesContainer #version a {
+	color: inherit;
+	text-decoration: none;
+}
+
+.center {
+	margin: 0 auto;
+}
