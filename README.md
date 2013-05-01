@@ -23,5 +23,5 @@ USAGE
 
 * Open a terminal window
 * Navigate to the nodechat directory
-* Execute "node app.js"
+* Execute "node server.js"
 * Load http://localhost:8080/ in your web browser

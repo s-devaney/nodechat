@@ -2,60 +2,71 @@
 <html>
 <head>
 	<meta charset=utf-8 />
-	<title></title>
-	<!--<link rel="spreadsheet" type="text/css" media="screen" href="css/style.css" />-->
+	<title>Nodechat v0.2.0</title>
+	<link rel="stylesheet" type="text/css" media="screen" href="css/style.css" />
 	<script type="text/javascript" src="/socket.io/socket.io.js"></script>
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
 	<script type="text/javascript">
 		var socket = io.connect("http://192.168.1.67:8080");
 		
 		socket.on("connect", function() {
-			//TODO: THIS IS NOT USER FRIENDLY!
-			socket.emit("adduser", prompt("What's your name?"));
+			//TODO: NOT USER FRIENDLY!
+			socket.emit("adduser", prompt());
 		});
 		
 		//TODO: FIX NONDESCRIPT PARAMETER NAMES
 		socket.on("updatechat", function(username, data) {
-			//TODO: REMOVE DEPRECATED HTML STYLING
-			$("#conversation").append("<b>"+username+":</b>"+data+"<br />");
+			//console.log("received message: "+data);
+			//TODO: USERNAME STYLING
+			$("#messages").append("<p>"+username+": "+data+"</p>");
 		});
 		
 		//TODO: FIX NONDESCRIPT PARAMETER NAMES
 		socket.on("updateusers", function(data) {
+			//console.log(data);
 			//TODO: THIS IS NOT EFFICIENT!
-			$("#users").empty();
-			console.log(data);
+			$("#usernames").empty();
 			
 			$.each(data, function(key, value) {
-				$("#users").append("<div>"+key+"</div>");
+				$("#usernames").append("<p>"+key+"</p>");
 			});
 		});
 		
-		$(function() {
-			$("#datasend").click(function() {
-				var message = $("#data").val();
-				$("#data").val("");
-				socket.emit("sendchat", message);
-			});
-			
-			$("#data").keypress(function(e) {
+		$(document).ready(function() {
+			$("#input").keypress(function(e) {
 				if(e.which == 13) {
-					$(this).blur();
-					$("#datasend").focus().click();
+					//var message = $(this).val();
+					//console.log("send message: " + message);
+					socket.emit("sendchat", $(this).val());
+					$(this).val("");
 				}
 			});
+			
+			//offset height of messagesContainer+usernameContainer div by 40px to accomodate for text input box
+			var parent = $("#chatContainer").height();
+			$("#messagesContainer, #usernames").height((parent-40)/parent*100+"%");
 		});
+		
 	</script>
 </head>
 <body>
-	<div style="float:left;width:100px;border-right:1px solid black;height:300px;padding:10px;overflow:scroll-y;">
-		<b>USERS</b>
-		<div id="users"></div>
-	</div>
-	<div style="float:left;width:300px;height:250px;overflow:scroll-y;padding:10px;">
-		<div id="conversation"></div>
-		<input id="data" style="width:200px;" />
-		<input type="button" id="datasend" value="send" />
+	<div id="container">
+		<div id="chatContainer">
+			<div id="messagesContainer">
+				<div id="messages">
+				</div>
+			</div>
+			<div id="inputContainer">
+				<input type="text" id="input" class="center" maxlength="240"/>
+			</div>
+		</div>
+		<div id="usernamesContainer">
+			<div id="usernames">
+			</div>
+			<div id="version">
+				<p>Nodechat v0.2.0 <a href="http://devaney.me.uk">Sam Devaney</a></p>
+			</div>
+		</div>
 	</div>
 </body>
 </html>

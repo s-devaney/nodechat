@@ -10,6 +10,8 @@ app.get("/", function(req, res) {
 	res.sendfile(__dirname + "/index.html");
 });
 
+app.use("/css", express.static(__dirname+"/css"));
+
 var usernames = {};
 
 io.sockets.on("connection", function(socket) {
