@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta charset=utf-8 />
-	<title>Nodechat v0.2.0</title>
+	<title>Nodechat v0.2.1</title>
 	<link rel="stylesheet" type="text/css" media="screen" href="css/style.css" />
 	<script type="text/javascript" src="/socket.io/socket.io.js"></script>
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
@@ -16,27 +16,27 @@
 		
 		//TODO: FIX NONDESCRIPT PARAMETER NAMES
 		socket.on("updatechat", function(username, data) {
-			//console.log("received message: "+data);
+			console.log("received message: "+data);
 			//TODO: USERNAME STYLING
 			$("#messages").append("<p>"+username+": "+data+"</p>");
 		});
 		
 		//TODO: FIX NONDESCRIPT PARAMETER NAMES
 		socket.on("updateusers", function(data) {
-			//console.log(data);
+			console.log(data);
 			//TODO: THIS IS NOT EFFICIENT!
 			$("#usernames").empty();
 			
-			$.each(data, function(key, value) {
-				$("#usernames").append("<p>"+key+"</p>");
+			$.each(data, function(index, value) {
+				$("#usernames").append("<p>"+value.username+"</p>");
 			});
 		});
 		
 		$(document).ready(function() {
 			$("#input").keypress(function(e) {
 				if(e.which == 13) {
-					//var message = $(this).val();
-					//console.log("send message: " + message);
+					var message = $(this).val();
+					console.log("send message: " + message);
 					socket.emit("sendchat", $(this).val());
 					$(this).val("");
 				}
@@ -64,7 +64,7 @@
 			<div id="usernames">
 			</div>
 			<div id="version">
-				<p>Nodechat v0.2.0 <a href="http://devaney.me.uk">Sam Devaney</a></p>
+				<p>Nodechat v0.2.1 <a href="http://devaney.me.uk">Sam Devaney</a></p>
 			</div>
 		</div>
 	</div>

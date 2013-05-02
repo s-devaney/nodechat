@@ -12,24 +12,64 @@ app.get("/", function(req, res) {
 
 app.use("/css", express.static(__dirname+"/css"));
 
-var usernames = {};
+var users = {};
+var userIDPool = [];
+var EOAPointer = 0;
 
 io.sockets.on("connection", function(socket) {
+	//console.log("connected");
+
 	socket.on("sendchat", function(data) {
-		io.sockets.emit("updatechat", socket.username, data);
+		io.sockets.emit("updatechat", users[socket.userPointer].username, data);
 	});
 	
 	socket.on("adduser", function(username) {
-		socket.username = username;
-		usernames[username] = username;
-		socket.emit("updatechat", "SERVER", "you have connected");
-		socket.broadcast.emit("updatechat", "SERVER", username+" has connected");
-		io.sockets.emit("updateusers", usernames);
+		var timestamp = Math.round(new Date().getTime() / 1000);
+
+		if(userIDPool.length > 0) {
+			socket.userPointer = userIDPool.pop();
+		} else {
+			socket.userPointer = EOAPointer;
+		}
+		
+		//console.log(socket.userPointer);
+
+		users[socket.userPointer] = new User(timestamp)
+		users[socket.userPointer].ID = EOAPointer;
+		users[socket.userPointer].username = username;
+		users[socket.userPointer].timestamp = timestamp
+		users[socket.userPointer].color = "#000000";
+
+		if(socket.userPointer = EOAPointer) {
+			EOAPointer++;
+		}
+
+		socket.emit("updatechat", "SERVER", users[socket.userPointer].username+" has connected");
+		io.sockets.emit("updateusers", users);
+		//console.log("added user: "+users[socket.userPointer].username);
 	});
 	
 	socket.on("disconnect", function() {
-		delete usernames[socket.username];
-		io.sockets.emit("updateusers", usernames);
-		socket.broadcast.emit("updatechat", "SERVER", socket.username+" has disconnected");
+		if(typeof socket.userPointer == "undefined") {
+			console.log("connection error, exiting...");
+			return false;
+		}
+		//console.log("disconnecting..."+socket.userPointer);
+		var pointer = socket.userPointer;
+		//console.log("pointer: "+pointer);
+		socket.broadcast.emit("updatechat", "SERVER", users[pointer].username+" has disconnected");
+		delete users[pointer];
+		userIDPool.push(pointer);
+		//console.log("users =");
+		//console.log(users);
+		//console.log("JSON: "+JSON.stringify(users));
+		io.sockets.emit("updateusers", users);
 	});
 });
+
+function User(data) {
+	var ID;
+	var username;
+	var timestamp;
+	var color;
+}
