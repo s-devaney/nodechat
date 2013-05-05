@@ -11,28 +11,31 @@ app.get("/", function(req, res) {
 });
 
 app.use("/css", express.static(__dirname+"/css"));
+app.use("/img", express.static(__dirname+"/img"));
 
 var users = {};
-var userIDPool = [];
 var EOAPointer = 0;
 
 io.sockets.on("connection", function(socket) {
-	//console.log("connected");
+	io.sockets.emit("updateusers", users);
 
-	socket.on("sendchat", function(data) {
+	socket.on("sendchat", function(message) {
+		if(typeof socket.userPointer == "undefined") {
+			socket.emit("updatechat", "SERVER", {"message": "you must login to send messages", "color": "#000000"});
+			return false;
+		}
+		var data = {};
+		data.color = users[socket.userPointer].color;
+		data.message = message
 		io.sockets.emit("updatechat", users[socket.userPointer].username, data);
 	});
 	
 	socket.on("adduser", function(username) {
 		var timestamp = Math.round(new Date().getTime() / 1000);
 
-		if(userIDPool.length > 0) {
-			socket.userPointer = userIDPool.pop();
-		} else {
-			socket.userPointer = EOAPointer;
-		}
+		socket.userPointer = EOAPointer;
 		
-		//console.log(socket.userPointer);
+		console.log(socket.userPointer);
 
 		users[socket.userPointer] = new User(timestamp)
 		users[socket.userPointer].ID = EOAPointer;
@@ -40,29 +43,40 @@ io.sockets.on("connection", function(socket) {
 		users[socket.userPointer].timestamp = timestamp
 		users[socket.userPointer].color = "#000000";
 
-		if(socket.userPointer = EOAPointer) {
-			EOAPointer++;
-		}
+		EOAPointer++;
 
-		socket.emit("updatechat", "SERVER", users[socket.userPointer].username+" has connected");
+		io.sockets.emit("updatechat", "SERVER", {"message": users[socket.userPointer].username+" has connected", "color": "#000000"});
 		io.sockets.emit("updateusers", users);
-		//console.log("added user: "+users[socket.userPointer].username);
+		console.log("added user: "+users[socket.userPointer].username);
+	});
+	
+	socket.on("updateUser", function(data) {
+		if(typeof socket.userPointer == "undefined") {
+			return false;
+		}
+		users[socket.userPointer].color = data.color;
+		if(users[socket.userPointer].username != data.username) {
+			io.sockets.emit("updatechat", "SERVER", {"message": users[socket.userPointer].username+" has changed their username to "+data.username, "color": "#000000"});
+		}
+		users[socket.userPointer].username = data.username;
+		io.sockets.emit("updateusers", users);
+	});
+	
+	socket.on("logout", function() {
+		socket.emit("updatechat", "SERVER", {"message": users[socket.userPointer].username+" has disconnected", "color": "#000000"});
+		socket.disconnect();
 	});
 	
 	socket.on("disconnect", function() {
+		//if user disconnects without logging in server will crash because username is undefined. Check if username is set first
+		//if username is not set nothing needs to be done so can close socket
 		if(typeof socket.userPointer == "undefined") {
 			console.log("connection error, exiting...");
 			return false;
 		}
 		//console.log("disconnecting..."+socket.userPointer);
-		var pointer = socket.userPointer;
-		//console.log("pointer: "+pointer);
-		socket.broadcast.emit("updatechat", "SERVER", users[pointer].username+" has disconnected");
-		delete users[pointer];
-		userIDPool.push(pointer);
-		//console.log("users =");
-		//console.log(users);
-		//console.log("JSON: "+JSON.stringify(users));
+		socket.broadcast.emit("updatechat", "SERVER", {"message": users[socket.userPointer].username+" has disconnected", "color": "#000000"});
+		delete users[socket.userPointer];
 		io.sockets.emit("updateusers", users);
 	});
 });

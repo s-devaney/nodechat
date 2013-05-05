@@ -1,12 +1,7 @@
-DESCRIPTION
---------------
-
-A real time chatroom powered by Node.js. Being event driven and using sockets it is extremely quick.
-
 DEMO
 --------------
 
-http://demo.devaney.me.uk:8080
+http://devaney.me.uk/demo/nodechat
 
 DEPENDENCIES
 --------------
@@ -28,5 +23,5 @@ USAGE
 
 * Open a terminal window
 * Navigate to the nodechat directory
-* Execute "node server.js"
+* Execute "node app.js"
 * Load http://localhost:8080/ in your web browser

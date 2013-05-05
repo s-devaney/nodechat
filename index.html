@@ -1,30 +1,26 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta charset=utf-8 />
-	<title>Nodechat v0.2.1</title>
+	<meta charset=utf-8" />
+	<title>Nodechat v0.3.0</title>
 	<link rel="stylesheet" type="text/css" media="screen" href="css/style.css" />
 	<script type="text/javascript" src="/socket.io/socket.io.js"></script>
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
 	<script type="text/javascript">
-		var socket = io.connect("http://192.168.1.67:8080");
+		var socket = io.connect("http://demo.devaney.me.uk:8080");
+		//store username locally for use in settings dialog
+		var user = new User();
+		user.username = null;
+		user.color = "#000000";
 		
-		socket.on("connect", function() {
-			//TODO: NOT USER FRIENDLY!
-			socket.emit("adduser", prompt());
-		});
-		
-		//TODO: FIX NONDESCRIPT PARAMETER NAMES
 		socket.on("updatechat", function(username, data) {
-			console.log("received message: "+data);
-			//TODO: USERNAME STYLING
-			$("#messages").append("<p>"+username+": "+data+"</p>");
+			//console.log("received message: "+data);
+			$("#messages").append('<p><span style="color: '+data.color+'">'+username+': '+data.message+'</span></p>');
+			$("#messagesContainer p:last")[0].scrollIntoView()
 		});
 		
-		//TODO: FIX NONDESCRIPT PARAMETER NAMES
 		socket.on("updateusers", function(data) {
-			console.log(data);
-			//TODO: THIS IS NOT EFFICIENT!
+			//console.log(data);
 			$("#usernames").empty();
 			
 			$.each(data, function(index, value) {
@@ -45,11 +41,80 @@
 			//offset height of messagesContainer+usernameContainer div by 40px to accomodate for text input box
 			var parent = $("#chatContainer").height();
 			$("#messagesContainer, #usernames").height((parent-40)/parent*100+"%");
+			
+			$("#dialogConfirm").bind("click", function() {
+				var username = $("#username").val();
+				console.log(username);
+				socket.emit("adduser", username);
+				user.username = username;
+				$("#dialogCancel").click();
+				return false;
+			});
+			
+			$("#overlay, #dialogCancel").bind("click", function() {
+				$("#overlay, #dialog, #login").hide();
+				$("#overlay, #dialogCancel, #dialogConfirm").unbind();
+				return false;
+			});
+			
+			$("#settingsLink").on("click", function() {
+				$("#changeUsername").val(user.username);
+				$("#overlay, #dialog, #settings").show();
+				
+				$("#overlay, #dialogCancel").bind("click", function() {
+					$("#overlay, #dialog, #settings").hide();
+					$("#overlay, #dialogCancel, #dialogConfirm, .chatColour").unbind();
+					return false;
+				});
+				
+				$("#dialogConfirm").bind("click", function() {
+					//covert RGB colour to HEX (.css() returns RGB in most browsers, but sometimes HEX in older browsers, so we need to standardize)
+					var selectedColour = rgb2hex($(".selectedColour").css("background-color"));
+					var selectedUsername = $("#changeUsername").val();
+					console.log(selectedColour + " " + selectedUsername);
+					user.color = selectedColour;
+					user.username = selectedUsername;
+					socket.emit("updateUser", user);
+					$("#dialogCancel").click();
+					return false;
+				});
+				
+				$(".chatColour").bind("click", function() {
+					$(".chatColour").removeClass("selectedColour");
+					$(this).addClass("selectedColour");
+					return false;
+				});
+
+				return false;
+			});
+			
+			$("#logoutLink").on("click", function() {
+				console.log("disconnecting");
+				socket.emit("logout");
+				return false;
+			});
 		});
 		
+		function User() {
+			var username;
+			var color;
+		}
+
+		function rgb2hex(rgb) {
+			 if (  rgb.search("rgb") == -1 ) {
+				  return rgb;
+			 } else {
+				  rgb = rgb.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+))?\)$/);
+				  function hex(x) {
+					   return ("0" + parseInt(x).toString(16)).slice(-2);
+				  }
+				  return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]); 
+			 }
+		}
 	</script>
 </head>
 <body>
+	<div id="overlay"></div>
 	<div id="container">
 		<div id="chatContainer">
 			<div id="messagesContainer">
@@ -63,9 +128,30 @@
 		<div id="usernamesContainer">
 			<div id="usernames">
 			</div>
-			<div id="version">
-				<p>Nodechat v0.2.1 <a href="http://devaney.me.uk">Sam Devaney</a></p>
+			<div id="toolbar">
+				<span style="border-right: 1px solid #e3e3e3;"><a id="settingsLink" href="#">Settings</a></span><span id="logoutLink"><a id="logoutLink" href="#">Logout</a></span>
 			</div>
+		</div>
+	</div>
+	<div id="dialog">
+		<div id="dialogContent">
+			<div id="login">
+				<p>Enter a username to begin chatting:</p>
+				<div style="width:300px; margin-top: 145px;" class="center"><label for="username" style="font-size: 1.2em;">Username: </label><input type="text" name="username" id="username" style="float: right;"/></div>
+			</div>
+			<div id="settings">
+				<p>Change your chat color:</p><br />
+				<a href="#" class="chatColour" style="background-color: #FF0000;"></a>
+				<a href="#" class="chatColour" style="background-color: #0000FF;"></a>
+				<a href="#" class="chatColour" style="background-color: #FFFF00;"></a>
+				<a href="#" class="chatColour" style="background-color: #FF00FF;"></a>
+				<a href="#" class="chatColour selectedColour" style="background-color: #000000;"></a><br /><br />
+				<p>Change your username</p><br />
+				<input type="text" id="changeUsername" />
+			</div>
+		</div>
+		<div id="dialogButtons">
+			<span style="border-right: 1px solid #e3e3e3;"><a id="dialogConfirm" href="#">Confirm</a></span><span id="dialogCancel"><a href="#">Cancel</a></span>
 		</div>
 	</div>
 </body>
