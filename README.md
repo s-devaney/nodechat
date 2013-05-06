@@ -1,7 +1,7 @@
 DEMO
 --------------
 
-http://devaney.me.uk/demo/nodechat
+http://demo.devaney.me.uk:8080
 
 DEPENDENCIES
 --------------
