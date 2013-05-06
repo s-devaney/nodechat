@@ -2,12 +2,12 @@
 <html>
 <head>
 	<meta charset=utf-8" />
-	<title>Nodechat v0.3.0</title>
+	<title>Nodechat v0.3.1</title>
 	<link rel="stylesheet" type="text/css" media="screen" href="css/style.css" />
 	<script type="text/javascript" src="/socket.io/socket.io.js"></script>
-	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 	<script type="text/javascript">
-		var socket = io.connect("http://demo.devaney.me.uk:8080");
+		var socket = io.connect("http://localhost:8080");
 		//store username locally for use in settings dialog
 		var user = new User();
 		user.username = null;
@@ -24,7 +24,7 @@
 			$("#usernames").empty();
 			
 			$.each(data, function(index, value) {
-				$("#usernames").append("<p>"+value.username+"</p>");
+				$("#usernames").append('<p><span style="color: '+value.color+'">'+value.username+'</span></p>');
 			});
 		});
 		
@@ -32,7 +32,7 @@
 			$("#input").keypress(function(e) {
 				if(e.which == 13) {
 					var message = $(this).val();
-					console.log("send message: " + message);
+					//console.log("send message: " + message);
 					socket.emit("sendchat", $(this).val());
 					$(this).val("");
 				}
@@ -44,7 +44,7 @@
 			
 			$("#dialogConfirm").bind("click", function() {
 				var username = $("#username").val();
-				console.log(username);
+				//console.log(username);
 				socket.emit("adduser", username);
 				user.username = username;
 				$("#dialogCancel").click();
@@ -71,7 +71,7 @@
 					//covert RGB colour to HEX (.css() returns RGB in most browsers, but sometimes HEX in older browsers, so we need to standardize)
 					var selectedColour = rgb2hex($(".selectedColour").css("background-color"));
 					var selectedUsername = $("#changeUsername").val();
-					console.log(selectedColour + " " + selectedUsername);
+					//console.log(selectedColour + " " + selectedUsername);
 					user.color = selectedColour;
 					user.username = selectedUsername;
 					socket.emit("updateUser", user);
@@ -89,7 +89,7 @@
 			});
 			
 			$("#logoutLink").on("click", function() {
-				console.log("disconnecting");
+				//console.log("disconnecting");
 				socket.emit("logout");
 				return false;
 			});

@@ -1,3 +1,11 @@
+0.3.1
+-----------
+* Added support for I.E 8 and above as well as latest Firefox, Safari, Chrome and Opera (probably works with much older versions)
+* Fixed bug where logging out without setting a username would crash server
+* User list now supports colours
+* Reduced unnecessary bandwith usage
+* Cleared up code and added comments
+
 0.3.0
 -----------
 * Added settings dialog
