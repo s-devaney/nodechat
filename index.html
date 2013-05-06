@@ -14,13 +14,11 @@
 		user.color = "#000000";
 		
 		socket.on("updatechat", function(username, data) {
-			//console.log("received message: "+data);
 			$("#messages").append('<p><span style="color: '+data.color+'">'+username+': '+data.message+'</span></p>');
 			$("#messagesContainer p:last")[0].scrollIntoView()
 		});
 		
 		socket.on("updateusers", function(data) {
-			//console.log(data);
 			$("#usernames").empty();
 			
 			$.each(data, function(index, value) {
@@ -32,7 +30,6 @@
 			$("#input").keypress(function(e) {
 				if(e.which == 13) {
 					var message = $(this).val();
-					//console.log("send message: " + message);
 					socket.emit("sendchat", $(this).val());
 					$(this).val("");
 				}
@@ -44,7 +41,6 @@
 			
 			$("#dialogConfirm").bind("click", function() {
 				var username = $("#username").val();
-				//console.log(username);
 				socket.emit("adduser", username);
 				user.username = username;
 				$("#dialogCancel").click();
@@ -71,7 +67,6 @@
 					//covert RGB colour to HEX (.css() returns RGB in most browsers, but sometimes HEX in older browsers, so we need to standardize)
 					var selectedColour = rgb2hex($(".selectedColour").css("background-color"));
 					var selectedUsername = $("#changeUsername").val();
-					//console.log(selectedColour + " " + selectedUsername);
 					user.color = selectedColour;
 					user.username = selectedUsername;
 					socket.emit("updateUser", user);
@@ -89,7 +84,6 @@
 			});
 			
 			$("#logoutLink").on("click", function() {
-				//console.log("disconnecting");
 				socket.emit("logout");
 				return false;
 			});
