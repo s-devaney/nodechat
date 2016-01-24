@@ -67,7 +67,7 @@ io.sockets.on("connection", function(socket) {
 		}
 		
 		//check if user has changed their colour
-		if(users[socket.userPointer.color != data.color) {
+		if(users[socket.userPointer.color] != data.color) {
 			users[socket.userPointer].color = data.color;
 			change = true;
 		}

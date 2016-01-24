@@ -7,8 +7,8 @@ DEPENDENCIES
 --------------
 
 Node.js (built on v0.10.2)  
-Socket.io module  
-Express module
+Socket.io
+Express
 
 INSTALLATION
 --------------
@@ -16,12 +16,12 @@ INSTALLATION
 * Install Nodejs from http://nodejs.org
 * Open a terminal window
 * Navigate to the nodechat directory
-* Execute "npm install -d" to install required modules
+* Execute "npm install" to install dependencies
 
 USAGE
 --------------
 
 * Open a terminal window
 * Navigate to the nodechat directory
-* Execute "node app.js"
+* Execute "node server.js"
 * Load http://localhost:8080/ in your web browser
